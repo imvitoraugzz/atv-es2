@@ -1,0 +1,90 @@
+@startuml
+
+class Usuario {
+  - id: Long
+  - nome: String
+  - matricula: String
+  - email: String
+  - telefone: String
+  + realizarReserva(Livro): Reserva
+  + consultarEmprestimos(): List<Emprestimo>
+}
+
+class Livro {
+  - id: Long
+  - titulo: String
+  - isbn: String
+  - anoPublicacao: int
+  - categoria: String
+  + consultarDisponibilidade(): int
+  + buscarCopiaDisponivel(): Copia
+}
+
+class Copia {
+  - id: Long
+  - codigo: String
+  - status: String
+  - localizacao: String
+  + marcarComoEmprestada(): void
+  + marcarComoDisponivel(): void
+  + verificarDisponibilidade(): boolean
+}
+
+class Biblioteca {
+  - id: Long
+  - nome: String
+  - endereco: String
+  - telefone: String
+  + cadastrarCopia(Livro): Copia
+  + consultarAcervo(): List<Copia>
+}
+
+class Autor {
+  - id: Long
+  - nome: String
+  - nacionalidade: String
+  - dataNascimento: LocalDate
+  + listarObras(): List<Livro>
+}
+
+class Editora {
+  - id: Long
+  - nome: String
+  - cnpj: String
+  - cidade: String
+  + listarPublicacoes(): List<Livro>
+}
+
+class Reserva {
+  - id: Long
+  - dataSolicitacao: LocalDateTime
+  - dataExpiracao: LocalDateTime
+  - status: String
+  + cancelar(): void
+  + expirar(): void
+  + confirmarRetirada(): Emprestimo
+}
+
+class Emprestimo {
+  - id: Long
+  - dataRetirada: LocalDate
+  - dataPrevistaDevolucao: LocalDate
+  - dataDevolucao: LocalDate
+  - multa: BigDecimal
+  + calcularMulta(): BigDecimal
+  + registrarDevolucao(): void
+  + renovar(): boolean
+}
+
+Usuario "1" -- "0..*" Reserva : solicita >
+Reserva "0..*" --> "1" Livro : reserva >
+Usuario "1" -- "0..*" Emprestimo : realiza >
+Emprestimo "0..*" --> "1" Copia : empresta >
+
+Livro *-- "1..*" Copia : possui >
+Biblioteca "1" o-- "0..*" Copia : mantém >
+
+Autor "1..*" -- "1..*" Livro : escreve >
+Editora "1" -- "0..*" Livro : publica >
+
+@enduml

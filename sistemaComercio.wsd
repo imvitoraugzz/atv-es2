@@ -1,0 +1,83 @@
+@startuml
+
+class Cliente {
+  - id: Long
+  - nome: String
+  - email: String
+  - cpf: String
+  + realizarPedido(): Pedido
+  + consultarPedidos(): List<Pedido>
+}
+
+class Pedido {
+  - id: Long
+  - dataPedido: LocalDateTime
+  - status: String
+  - valorTotal: BigDecimal
+  + adicionarItem(ItemPedido): void
+  + removerItem(ItemPedido): void
+  + calcularTotal(): BigDecimal
+  + realizarPagamento(Pagamento): void
+}
+
+class ItemPedido {
+  - id: Long
+  - quantidade: int
+  - precoUnitario: BigDecimal
+  + calcularSubtotal(): BigDecimal
+}
+
+class Produto {
+  - id: Long
+  - nome: String
+  - descricao: String
+  - preco: BigDecimal
+  - estoque: int
+  + atualizarEstoque(quantidade: int): void
+}
+
+abstract class Pagamento {
+  - id: Long
+  - valor: BigDecimal
+  - dataPagamento: LocalDateTime
+  - status: String
+  + {abstract} processar(): boolean
+  + {abstract} validar(): boolean
+}
+
+class PagamentoCartao {
+  - numeroCartao: String
+  - titular: String
+  - validade: String
+  - cvv: String
+  + processar(): boolean
+  + validar(): boolean
+}
+
+class PagamentoPix {
+  - chavePix: String
+  - qrCode: String
+  + processar(): boolean
+  + validar(): boolean
+  + gerarQRCode(): String
+}
+
+class PagamentoBoleto {
+  - codigoBarras: String
+  - dataVencimento: LocalDate
+  - nossoNumero: String
+  + processar(): boolean
+  + validar(): boolean
+  + gerarBoleto(): byte[]
+}
+
+Cliente "1" -- "0..*" Pedido : realiza >
+Pedido *-- "1..*" ItemPedido : contém >
+ItemPedido "0..*" --> "1" Produto : referencia >
+Pedido o-- "0..1" Pagamento : pago por >
+
+Pagamento <|-- PagamentoCartao
+Pagamento <|-- PagamentoPix
+Pagamento <|-- PagamentoBoleto
+
+@enduml
