@@ -19,8 +19,7 @@ public class Emprestimo {
         this.dataPrevistaDevolucao = dataRetirada.plusDays(14);
         this.multa = BigDecimal.ZERO;
 
-        // Atualiza status da cópia física
-        copia.marcarComoEmprestada();
+        copia.marcarComoEmprestada(); //atualiza o status
     }
 
     public BigDecimal calcularMulta() {
